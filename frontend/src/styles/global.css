@@ -1,0 +1,104 @@
+@import url("./variables.css");
+
+/* CSS Reset (lightweight) */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility classes */
+.container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+}
+
+.muted {
+    color: var(--color-text-muted);
+}
+
+/* Buttons (base) - can be overridden per component */
+.btn {
+    appearance: none;
+    border: 1px solid #d1d5e0;
+    background: #fff;
+    color: #1e2130;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.05s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn:hover {
+    border-color: var(--color-primary);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.btn-outline {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.btn-ghost {
+    background: #f4f5fa;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* Inputs */
+.input {
+    width: 100%;
+    border: 1px solid #cfd6e4;
+    background: #fdfdfd;
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12);
+}
+
+.input--error {
+    border-color: #e55353;
+}
+
+.error {
+    color: #d64545;
+    font-size: 12px;
+}

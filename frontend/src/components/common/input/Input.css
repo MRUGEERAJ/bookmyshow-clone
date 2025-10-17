@@ -1,0 +1,16 @@
+@import url("../../../styles/variables.css");
+
+.c-input {
+  width: 100%;
+  border: 1px solid #cfd6e4;
+  background: #fdfdfd;
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.c-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12); }
+.c-input--error { border-color: #e55353; }
+
+
