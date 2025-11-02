@@ -34,7 +34,7 @@ const Home = () => {
     const getMovies = async () => {
       try {
         const res = await api.get("/movies");
-        if (mounted) setMovies([...res.data, ...res.data, ...res.data]);
+        if (mounted) setMovies(res.data);
       } catch (error) {
         if (mounted) setMovies([]);
       }
