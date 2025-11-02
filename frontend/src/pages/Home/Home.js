@@ -1,39 +1,23 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axiosInstance";
 import Button from "../../components/common/button/Button";
-import Chip from "../../components/common/chip/Chip";
 import Card from "../../components/common/card/Card";
 import "./Home.css";
 import logo from "../../assets/images/bookMyShowLight.png";
 
-const placeholderMovies = [
-  { id: 1, title: "The Grand Premiere" },
-  { id: 2, title: "Neon Nights" },
-  { id: 3, title: "Into The Frames" },
-  { id: 4, title: "Sound of Stars" },
-  { id: 5, title: "Hidden Alley" },
-  { id: 6, title: "The Last Ticket" },
-  { id: 7, title: "Popcorn Dreams" },
-  { id: 8, title: "City of Reels" },
-];
-
-const genres = [
-  "Action",
-  "Comedy",
-  "Drama",
-  "Horror",
-  "Romance",
-  "Thriller",
-  "Sci-Fi",
-  "Animation",
-];
-
 const Home = () => {
+  const listRef = useRef(null);
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
+  const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+
+  const itemsPerPage = 5;
+  const totalPages = Math.max(1, Math.ceil(movies.length / itemsPerPage));
 
   useEffect(() => {
     let mounted = true;
@@ -47,18 +31,33 @@ const Home = () => {
         if (mounted) setLoading(false);
       }
     };
+    const getMovies = async () => {
+      try {
+        const res = await api.get("/movies");
+        if (mounted) setMovies([...res.data, ...res.data, ...res.data]);
+      } catch (error) {
+        if (mounted) setMovies([]);
+      }
+    };
     fetchUser();
+    getMovies();
     return () => {
       mounted = false;
     };
   }, []);
 
-  const filtered = useMemo(() => {
-    if (!searchText.trim()) return placeholderMovies;
-    return placeholderMovies.filter((m) =>
-      m.title.toLowerCase().includes(searchText.toLowerCase())
-    );
-  }, [searchText]);
+  const scroll = (direction) => {
+    if (!listRef.current) return;
+    const { clientWidth } = listRef.current;
+    let nextPage = page + (direction === "left" ? -1 : 1);
+    if (nextPage < 0) nextPage = 0;
+    if (nextPage > totalPages - 1) nextPage = totalPages - 1;
+    setPage(nextPage);
+    listRef.current.scrollTo({
+      left: nextPage * clientWidth,
+      behavior: "smooth",
+    });
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -107,26 +106,31 @@ const Home = () => {
         </div>
       </section>
 
-      {/*<section className="section">
-        <h2 className="section__title">Trending Now</h2>
-        <div className="grid">
-          {filtered.map((m) => (
-            <Card key={m.id} title={m.title} meta="UA • 2h 10m" onClick={() => navigate("/")} />
-          ))}
-          {filtered.length === 0 && (
-            <div className="empty">No results. Try another search.</div>
+      <section className="section">
+        <h2 className="section__title">Recommended for You</h2>
+        <div className="carousel">
+          {page > 0 && (
+            <button className="arrow left" onClick={() => scroll("left")}>
+              ‹
+            </button>
+          )}
+          <div className="list" ref={listRef}>
+            {movies.map((movie) => (
+              <Card
+                key={movie._id}
+                movie={movie}
+                onClick={() => navigate(`/movies/${movie._id}`)}
+              />
+            ))}
+          </div>
+
+          {page < totalPages - 1 && (
+            <button className="arrow right" onClick={() => scroll("right")}>
+              ›
+            </button>
           )}
         </div>
-      </section>*/}
-
-      {/*<section className="section">
-        <h3 className="section__title">Popular Genres</h3>
-        <div className="chips">
-          {genres.map((g) => (
-            <Chip key={g} onClick={() => setQuery(g)}>{g}</Chip>
-          ))}
-        </div>
-      </section>*/}
+      </section>
     </div>
   );
 };
